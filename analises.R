@@ -93,7 +93,7 @@ summary(df_recencia$recencia)
 
 ggplot(dados = df_recencia) +
     geom_bar(aes(x = df_recencia$recencia), fill = 'darkblue') +
-    labs(x = 'Meses', y = 'Número de observações', title = 'Recências por mês',
+    labs(x = 'Mes', y = 'Número de observações', title = 'Recências',
          caption = 'Fonte: Kaggle | E-commerce Data') +
     xlim(0, 12) +
     scale_x_continuous(breaks = seq(0, 12, by = 1)) +
@@ -141,6 +141,7 @@ summary(df)
 #### Análise do cluster
 ## Definição do número de cluster
 ?fviz_nbclust
+
 fviz_nbclust(df[2:4], kmeans, method = 'wss') +
     geom_vline(xintercept = 6, linetype = 2)
 
@@ -152,7 +153,7 @@ km.res <- kmeans(df[2:4], 6, nstart = 25)
 print(km.res)
 
 aggregate(df_rfv, by = list(km.res$cluster), mean)
-df_2 <- cbind(df, cluster = km.res$cluster)
+df_2 <- cbind(df_rfv, cluster = km.res$cluster)
 table(df_2$cluster)
 
 fviz_cluster(km.res, data=df_2,
@@ -165,14 +166,42 @@ fviz_cluster(km.res, data=df_2,
 
 ## análise do impacto de cada variável
 ## 
-ggplot(df_2, aes(x = as.factor(cluster), y = recencia)) +
-    geom_boxplot()
+ggplot(df_2, aes(x = as.factor(cluster), y = recencia, fill = as.factor(cluster))) +
+    geom_boxplot() +
+    labs(title = "Recência", y = 'Quant', x = "cluster",
+         caption = 'Fonte: Kaggle | E-commerce Data') +
+    theme_ipsum() +
+    theme(
+         legend.position = "none",
+         axis.title.y = element_text(size = 16),
+         axis.ticks.y = element_blank(),
+         axis.title.x = element_text(size = 16)
+    )
 
-ggplot(df_2, aes(x = as.factor(cluster), y = cont)) +
-    geom_boxplot()
+ggplot(df_2, aes(x = as.factor(cluster), y = cont, fill = as.factor(cluster))) +
+    geom_boxplot() +
+    labs(title = "Frequência", y = 'Quant', x = "cluster",
+         caption = 'Fonte: Kaggle | E-commerce Data') +
+    theme_ipsum() +
+    theme(
+        legend.position = "none",
+        axis.title.y = element_text(size = 16),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 16)
+    )
 
-ggplot(df_2, aes(x = as.factor(cluster), y = media)) +
-    geom_boxplot()
+ggplot(df_2, aes(x = as.factor(cluster), y = media, fill = as.factor(cluster))) +
+    geom_boxplot() +
+    labs(title = "Valor Monetário médio (R$)", y = 'Quant', x = "cluster",
+         caption = 'Fonte: Kaggle | E-commerce Data') +
+    theme_ipsum() +
+    theme(
+        legend.position = "none",
+        axis.title.y = element_text(size = 16),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 16)
+    )
 
 ggplot(df_2, aes(x = CustomerID, y = cont, col = as.factor(cluster))) +
-    geom_point()
+    geom_point() +
+    theme_ipsum()
